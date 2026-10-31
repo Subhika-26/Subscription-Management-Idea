@@ -161,6 +161,105 @@ def login():
             return redirect(url_for("customer_portal") if u["role"]=="customer" else url_for("home"))
         flash("Invalid email or password.","error")
     return render_template("login.html")
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    # If the user is already logged in, redirect them.
+    if session.get("user_id"):
+        if session.get("role") == "customer":
+            return redirect(url_for("customer_portal"))
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        company = request.form.get("company", "").strip()
+
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        # Check required fields.
+        if not name or not email or not password:
+            flash("Please fill in all required fields.", "error")
+            return render_template("register.html")
+
+        # Check password length.
+        if len(password) < 8:
+            flash("Password must contain at least 8 characters.", "error")
+            return render_template("register.html")
+
+        # Check whether passwords match.
+        if password != confirm_password:
+            flash("Passwords do not match.", "error")
+            return render_template("register.html")
+
+        c = db()
+
+        try:
+
+            # Check whether this email is already registered.
+            existing = c.execute(
+                "SELECT id FROM users WHERE email = ?",
+                (email,)
+            ).fetchone()
+
+            if existing:
+                flash("An account with this email already exists.", "error")
+                return render_template("register.html")
+
+            # Check whether a customer record already exists.
+            customer = c.execute(
+                "SELECT id FROM customers WHERE lower(email) = ?",
+                (email,)
+            ).fetchone()
+
+            if customer:
+                customer_id = customer["id"]
+
+            else:
+                # Create a new customer record.
+                c.execute(
+                    """INSERT INTO customers(name, email, phone, company)
+                       VALUES (?, ?, ?, ?)""",
+                    (name, email, phone, company)
+                )
+
+                customer_id = c.execute(
+                    "SELECT last_insert_rowid()"
+                ).fetchone()[0]
+
+            # Create a customer login account.
+            c.execute(
+                """INSERT INTO users(name, email, password, role, customer_id)
+                   VALUES (?, ?, ?, 'customer', ?)""",
+                (
+                    name,
+                    email,
+                    generate_password_hash(password),
+                    customer_id
+                )
+            )
+
+            c.commit()
+
+            flash("Account created successfully. Please log in.", "success")
+
+            return redirect(url_for("login"))
+
+        except sqlite3.IntegrityError:
+
+            c.rollback()
+
+            flash("This email is already registered.", "error")
+
+            return render_template("register.html")
+
+        finally:
+            c.close()
+
+    return render_template("register.html")
 
 @app.route("/logout")
 def logout():

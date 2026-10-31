@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Create Account · Brightloop</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-body">
+
+    <div class="login-card">
+
+        <!-- Brand -->
+        <a class="brand login-brand">
+            <span class="brand-mark">B</span>
+
+            <span>
+                brightloop
+                <small>SUBSCRIPTION CLOUD</small>
+            </span>
+        </a>
+
+        <!-- Welcome -->
+        <p class="eyebrow">GET STARTED</p>
+
+        <h1>Create your account</h1>
+
+        <p class="muted">
+            Join Brightloop and manage your subscriptions in one place.
+        </p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- Registration Form -->
+        <form method="post" class="login-form">
+
+            <label>
+                Full name
+                <input type="text"
+                       name="name"
+                       placeholder="Enter your full name"
+                       required>
+            </label>
+
+            <label>
+                Email address
+                <input type="email"
+                       name="email"
+                       placeholder="Enter your email address"
+                       required>
+            </label>
+
+            <label>
+                Phone number
+                <input type="text"
+                       name="phone"
+                       placeholder="Enter your phone number">
+            </label>
+
+            <label>
+                Company name
+                <input type="text"
+                       name="company"
+                       placeholder="Enter your company name">
+            </label>
+
+            <label>
+                Password
+                <input type="password"
+                       name="password"
+                       placeholder="Minimum 8 characters"
+                       minlength="8"
+                       required>
+            </label>
+
+            <label>
+                Confirm password
+                <input type="password"
+                       name="confirm_password"
+                       placeholder="Re-enter your password"
+                       required>
+            </label>
+
+            <button type="submit" class="btn primary full">
+                Create account
+            </button>
+
+        </form>
+
+        <p class="muted">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+
+    </div>
+
+</body>
+</html>
