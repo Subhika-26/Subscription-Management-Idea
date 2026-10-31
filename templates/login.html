@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Sign in · Brightloop</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-body">
+
+    <div class="login-card">
+
+        <!-- Brand -->
+        <a class="brand login-brand">
+            <span class="brand-mark">B</span>
+
+            <span>
+                brightloop
+                <small>SUBSCRIPTION CLOUD</small>
+            </span>
+        </a>
+
+        <!-- Welcome -->
+        <p class="eyebrow">WELCOME BACK</p>
+
+        <h1>Sign in to your workspace</h1>
+
+        <p class="muted">
+            Manage subscriptions, billing and revenue in one place.
+        </p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% for category, message in messages %}
+
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+        <!-- Login Form -->
+        <form method="post" class="login-form">
+
+            <label>
+                Email address
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email address"
+                    required
+                >
+            </label>
+
+            <label>
+                Password
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </label>
+
+            <button type="submit" class="btn primary full">
+                Sign in
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+</html>

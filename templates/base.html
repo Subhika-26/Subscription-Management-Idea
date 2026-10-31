@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brightloop · Subscription Management</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head><body>
+<div class="shell">
+<aside class="sidebar"><a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">B</span><span>brightloop<small>SUBSCRIPTION CLOUD</small></span></a><div class="nav-label">WORKSPACE</div>
+<a class="nav-item {% if page=='dashboard' %}active{% endif %}" href="{{ url_for('home') }}">▦ <span>Overview</span></a>
+{% if session.role=='customer' %}<a class="nav-item {% if page=='customer_portal' %}active{% endif %}" href="{{ url_for('customer_portal') }}">▦ <span>My account</span></a>{% else %}
+{% for endpoint,label,ico in [('customers','Customers','♙'),('products','Products','▣'),('plans','Subscription plans','◫'),('quotations','Quotations','▤'),('subscriptions','Subscriptions','↻'),('invoices','Invoices','▧'),('discounts','Discounts','％'),('payments','Payments','₹'),('reports','Reports','◷')] %}
+<a class="nav-item {% if page=='module' and module==endpoint or page==endpoint %}active{% endif %}" href="{{ url_for('module_page',module=endpoint) if endpoint in ['customers','products','plans','discounts'] else url_for(endpoint) }}">{{ ico }} <span>{{ label }}</span></a>
+{% endfor %}
+<a class="nav-item {% if page=='assistant' %}active{% endif %}" href="{{ url_for('revenue_assistant') }}">✦ <span>Revenue assistant</span></a><a class="nav-item {% if page=='reminders' %}active{% endif %}" href="{{ url_for('reminders') }}">◷ <span>Reminders</span></a>{% endif %}
+{% if session.role=='admin' %}<div class="nav-label">ADMINISTRATION</div><a class="nav-item" href="{{ url_for('staff') }}">♧ <span>Staff accounts</span></a>{% endif %}
+<div class="sidebar-bottom"><div class="user-mini"><div class="avatar">{{ session.name[:1]|upper }}</div><div><b>{{ session.name }}</b><small>{{ session.role|title }}</small></div></div><a class="logout" href="{{ url_for('logout') }}">↗ Sign out</a></div>
+</aside>
+<main class="main"><header class="topbar"><div class="mobile-brand">BRIGHTLOOP</div><div class="top-right"><span class="live-dot"></span><span>Workspace active</span><div class="avatar small">{{ session.name[:1]|upper }}</div></div></header>
+<div class="content">{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}{% block content %}{% endblock %}<footer>© 2026 Brightloop Software <span>Subscription Management System · Demo build</span></footer></div></main></div></body></html>
